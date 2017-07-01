@@ -12,11 +12,11 @@ export class Processor {
 
     public compute(seedNumber: number, numberOfSteps: number, match: string) {
         for (let i = 0; i < numberOfSteps; i++) {
-            let workingString = bases.toAlphabet(seedNumber + i, this.characters);
+            const workingString = bases.toAlphabet(seedNumber + i, this.characters);
 
-            let md5 = crypto.createHash('md5').update(workingString).digest("hex");
-            let sha1 = crypto.createHash('sha1').update(workingString).digest("hex");
-            let sha256 = crypto.createHash('sha256').update(workingString).digest("hex");
+            const md5 = crypto.createHash('md5').update(workingString).digest("hex");
+            const sha1 = crypto.createHash('sha1').update(workingString).digest("hex");
+            const sha256 = crypto.createHash('sha256').update(workingString).digest("hex");
 
             if (md5 == match) {
                 return {

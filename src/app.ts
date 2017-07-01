@@ -6,7 +6,7 @@ co(function* () {
 
     const db = lowdb('./src/repositories/db.json');
 
-    db.defaults({ items: [] })
+    db.defaults({ items: [], processes: [] })
         .write()
 
     const itemService: ItemService = new ItemService();

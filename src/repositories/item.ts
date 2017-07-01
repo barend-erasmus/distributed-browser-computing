@@ -7,7 +7,7 @@ import { Item } from './../models/item';
 
 export class ItemRepository {
 
-    public findUnprocessed(): Promise<Item> {
+    public findExpired(processId: string): Promise<Item> {
 
         const db = lowdb(path.join(__dirname, 'db.json'));
 
@@ -17,7 +17,7 @@ export class ItemRepository {
             return Promise.resolve(null);
         }
 
-        const item: Item = items.find((x) => x.answer === null && x.requestedTimestamp !== null && x.requestedTimestamp < new Date().getTime() - 5000);
+        const item: Item = items.find((x) => x.proccessId === processId && x.requestedTimestamp !== null && x.requestedTimestamp < new Date().getTime() - 5000);
 
         if (!item) {
             return Promise.resolve(null);
@@ -26,17 +26,17 @@ export class ItemRepository {
         return Promise.resolve(new Item(item.id, item.proccessId, item.seedNumber, item.numberOfSteps, item.requestedTimestamp, item.createdTimestamp, item.completedTimestamp, item.hash, item.answer));
     }
 
-    public findLast(): Promise<Item> {
+    public findLast(processId: string): Promise<Item> {
         const db = lowdb(path.join(__dirname, 'db.json'));
 
         let items: Item[] = db.get('items').value();
 
+        items = items
+            .filter((x) => x.proccessId === processId);
+
         items.sort((a: Item, b: Item) => {
             return a.seedNumber > b.seedNumber ? 1 : 0;
-        })
-
-        items = items
-            .filter((x) => x.answer === null);
+        });
 
         if (items.length === 0) {
             return Promise.resolve(null);

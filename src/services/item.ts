@@ -1,21 +1,32 @@
 // Imports
 import * as co from 'co';
 import * as uuid from 'uuid';
+import * as crypto from 'crypto';
 
 // Import repositories
 import { ItemRepository } from './../repositories/item';
+import { ProcessRepository } from './../repositories/process';
 
 // Import models
 import { Item } from './../models/item';
+import { Process } from './../models/process';
 
 export class ItemService {
 
     private itemRepository: ItemRepository = new ItemRepository();
+    private processRepository: ProcessRepository = new ProcessRepository();
 
     public find(): Promise<Item> {
         const self = this;
         return co(function* () {
-            const item: Item = yield self.itemRepository.findUnprocessed();
+
+            const process: Process = yield self.processRepository.findUnanswered();
+
+            if (!process) {
+                return null;
+            }
+
+            const item: Item = yield self.itemRepository.findExpired(process.id);
 
             if (item) {
                 item.requestedTimestamp = new Date().getTime();
@@ -23,7 +34,7 @@ export class ItemService {
                 return item;
             }
 
-            const lastItem: Item = yield self.itemRepository.findLast();
+            const lastItem: Item = yield self.itemRepository.findLast(process.id);
 
             if (lastItem) {
                 const newItem = new Item(
@@ -45,13 +56,13 @@ export class ItemService {
             } else {
                 const newItem = new Item(
                     uuid.v4(),
-                    '123',
+                    process.id,
                     0,
                     200,
                     new Date().getTime(),
                     new Date().getTime(),
                     null,
-                    '5d41402abc4b2a76b9719d911017c592',
+                    process.hash,
                     null
                 );
 
@@ -65,12 +76,27 @@ export class ItemService {
     public handledItem(id: string, answer: string): Promise<boolean> {
         const self = this;
         return co(function* () {
+
             const item: Item = yield self.itemRepository.findById(id);
+
+            const md5 = crypto.createHash('md5').update(answer).digest("hex");
+            const sha1 = crypto.createHash('sha1').update(answer).digest("hex");
+            const sha256 = crypto.createHash('sha256').update(answer).digest("hex");
+
+            if (md5 !== item.hash && sha1 !== item.hash && sha256 !== item.hash){
+                return false;
+            }
 
             item.requestedTimestamp = null;
             item.answer = answer;
 
             yield self.itemRepository.update(item);
+
+            const process: Process = yield self.processRepository.findById(item.proccessId);
+
+            process.answer = answer;
+
+            yield self.processRepository.update(process);
 
             return true;
         });
