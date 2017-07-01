@@ -1,0 +1,29 @@
+{
+  "name": "distributed-browser-computing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/barend-erasmus/distributed-browser-computing.git"
+  },
+  "author": "Barend Erasmus",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/barend-erasmus/distributed-browser-computing/issues"
+  },
+  "homepage": "https://github.com/barend-erasmus/distributed-browser-computing#readme",
+  "dependencies": {
+    "bases": "^0.2.1",
+    "co": "^4.6.0",
+    "crypto": "0.0.3",
+    "lowdb": "^0.16.2",
+    "uuid": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.7"
+  }
+}
