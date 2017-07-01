@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsc & node ./src/app.js",
+    "webpack": "tsc & webpack ./src/browser-client.js ./src/browser-client.bundle.js"
   },
   "repository": {
     "type": "git",
@@ -18,12 +19,18 @@
   "homepage": "https://github.com/barend-erasmus/distributed-browser-computing#readme",
   "dependencies": {
     "bases": "^0.2.1",
+    "body-parser": "^1.17.2",
     "co": "^4.6.0",
+    "cors": "^2.8.3",
     "crypto": "0.0.3",
+    "express": "^4.15.3",
     "lowdb": "^0.16.2",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
+    "@types/express": "^4.0.36",
     "@types/node": "^8.0.7"
   }
 }

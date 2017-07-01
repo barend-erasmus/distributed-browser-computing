@@ -8,7 +8,6 @@ import { Item } from './../models/item';
 export class ItemRepository {
 
     public findExpired(processId: string): Promise<Item> {
-
         const db = lowdb(path.join(__dirname, 'db.json'));
 
         const items: Item[] = db.get('items').value();
@@ -75,10 +74,9 @@ export class ItemRepository {
     }
 
     public update(item: Item): Promise<boolean> {
-
         const db = lowdb(path.join(__dirname, 'db.json'));
 
-        const items: Item[] = db.get('items')
+        db.get('items')
             .find({ id: item.id })
             .assign(item)
             .write();

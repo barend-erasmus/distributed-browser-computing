@@ -49,7 +49,7 @@ export class ItemService {
                     null
                 );
 
-                 yield self.itemRepository.insert(newItem);
+                yield self.itemRepository.insert(newItem);
 
                 return newItem;
 
@@ -58,7 +58,7 @@ export class ItemService {
                     uuid.v4(),
                     process.id,
                     0,
-                    200,
+                    500,
                     new Date().getTime(),
                     new Date().getTime(),
                     null,
@@ -79,24 +79,27 @@ export class ItemService {
 
             const item: Item = yield self.itemRepository.findById(id);
 
-            const md5 = crypto.createHash('md5').update(answer).digest("hex");
-            const sha1 = crypto.createHash('sha1').update(answer).digest("hex");
-            const sha256 = crypto.createHash('sha256').update(answer).digest("hex");
+            item.requestedTimestamp = null;
 
-            if (md5 !== item.hash && sha1 !== item.hash && sha256 !== item.hash){
-                return false;
+            if (answer) {
+                const md5 = crypto.createHash('md5').update(answer).digest("hex");
+                const sha1 = crypto.createHash('sha1').update(answer).digest("hex");
+                const sha256 = crypto.createHash('sha256').update(answer).digest("hex");
+
+                if (md5 !== item.hash && sha1 !== item.hash && sha256 !== item.hash) {
+                    return false;
+                }
+
+                item.answer = answer;
+
+                const process: Process = yield self.processRepository.findById(item.proccessId);
+
+                process.answer = answer;
+
+                yield self.processRepository.update(process);
             }
 
-            item.requestedTimestamp = null;
-            item.answer = answer;
-
             yield self.itemRepository.update(item);
-
-            const process: Process = yield self.processRepository.findById(item.proccessId);
-
-            process.answer = answer;
-
-            yield self.processRepository.update(process);
 
             return true;
         });
