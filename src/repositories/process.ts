@@ -7,6 +7,14 @@ import { Process } from './../models/process';
 
 export class ProcessRepository {
 
+    public list(): Promise<Process[]> {
+        const db = lowdb(path.join(__dirname, 'db.json'));
+
+        const processes: Process[] = db.get('processes').value();
+
+        return Promise.resolve(processes);
+    }
+
     public findUnanswered(): Promise<Process> {
         const db = lowdb(path.join(__dirname, 'db.json'));
 

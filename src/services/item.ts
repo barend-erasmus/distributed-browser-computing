@@ -16,6 +16,22 @@ export class ItemService {
     private itemRepository: ItemRepository = new ItemRepository();
     private processRepository: ProcessRepository = new ProcessRepository();
 
+    public createProcess(hash: string): Promise<Process> {
+        const self = this;
+        return co(function* () {
+            const process: Process = new Process(uuid.v4(), hash, null);
+
+            yield self.processRepository.insert(process);
+
+            return process;
+
+        });
+    }
+
+    public listProcesses(): Promise<Process[]> {
+        return this.processRepository.list();
+    }
+
     public find(): Promise<Item> {
         const self = this;
         return co(function* () {

@@ -1,11 +1,11 @@
 // Imports models
-import { Item } from './models/item';
+import { Item } from './../../models/item';
 
 // Imports
-import { Processor } from './processor';
+import { Processor } from './../../processor';
 
 setInterval(function () {
-    httpRequest('GET', 'http://localhost:3000/find', null, function (item: any) {
+    httpRequest('GET', 'https://z1.openservices.co.za/find', null, function (item: any) {
         if (!item) {
             return;
         }
@@ -14,7 +14,7 @@ setInterval(function () {
 
         const result: { type: string, answer: string } = processor.compute(item.seedNumber, item.numberOfSteps, item.hash);
 
-        httpRequest('POST', 'http://localhost:3000/handle', JSON.stringify({
+        httpRequest('POST', 'https://z1.openservices.co.za/handle', JSON.stringify({
             id: item.id,
             answer: result ? result.answer : null
         }), function (body: any) {
